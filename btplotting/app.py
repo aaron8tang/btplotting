@@ -33,6 +33,10 @@ from .helper.bokeh import generate_stylesheet
 from .tab import BacktraderPlottingTab
 from .tabs import AnalyzerTab, MetadataTab, LogTab, SourceTab
 
+import warnings
+
+warnings.filterwarnings('ignore')
+
 _logger = logging.getLogger(__name__)
 
 
@@ -505,13 +509,16 @@ class BacktraderPlotting(metaclass=bt.MetaParams):
                         fill_gaps=fill_gaps)
                     df = df_data.join(df)
                 else:
+                    df_new = pd.DataFrame()
                     for lineidx, line in enumerate(obj.lines):
                         source_id = get_source_id(line)
                         new_line = tmpclk.get_list_from_line(
                             line,
                             clkalign=clkidx,
                             fill_gaps=fill_gaps)
-                        df[source_id] = new_line
+                        #df[source_id] = new_line
+                        df_new[source_id] = new_line
+                    df = pd.concat([df,df_new],axis=1)
 
         # set required values and apply index
         if df.shape[0] > 0:
